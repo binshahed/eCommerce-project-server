@@ -41,9 +41,14 @@ export const getAllProduct = async (rec: Request, res: Response) => {
   const searchQuery = rec.query;
   try {
     const products = await productService.getAllProduct(searchQuery);
+    if (products.length === 0) {
+      throw new Error('product not found');
+    }
     res.status(200).send({
       success: true,
-      message: 'Products fetched successfully!',
+      message: searchQuery.searchTerm
+        ? `Products matching search term ${searchQuery.searchTerm} fetched successfully!`
+        : 'Products fetched successfully!',
       data: products,
     });
   } catch (error: any) {
