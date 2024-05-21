@@ -6,8 +6,10 @@ const createOrder = async (order: TOrder) => {
   return result;
 };
 
-const getOrders = async () => {
-  const result = await Order.find();
+const getOrders = async (queryEmail: string | undefined) => {
+  const result = await Order.aggregate([
+    queryEmail ? { $match: { email: queryEmail } } : { $match: {} },
+  ]);
   return result;
 };
 

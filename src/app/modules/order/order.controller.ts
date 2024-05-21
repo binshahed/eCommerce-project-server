@@ -50,7 +50,14 @@ export const createOrder = async (req: Request, res: Response) => {
 
 export const getOrders = async (req: Request, res: Response) => {
   try {
-    const orders = await orderService.getOrders();
+    let queryEmail: string | undefined;
+
+    // Check if req.query.email exists and is a string
+    if (typeof req.query.email === 'string') {
+      queryEmail = req.query.email;
+    }
+
+    const orders = await orderService.getOrders(queryEmail);
     res.status(200).send({
       success: true,
       data: orders,
