@@ -56,10 +56,15 @@ export const getOrders = async (req: Request, res: Response) => {
     if (typeof req.query.email === 'string') {
       queryEmail = req.query.email;
     }
-
     const orders = await orderService.getOrders(queryEmail);
+
+    if (orders.length === 0) {
+      throw new Error('orders not found');
+    }
+
     res.status(200).send({
       success: true,
+      message: 'orders fetched successfully',
       data: orders,
     });
   } catch (err: any) {

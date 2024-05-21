@@ -25,8 +25,7 @@ export const createProduct = async (rec: Request, res: Response) => {
       );
       res.status(400).send({
         success: false,
-        message: 'Validation failed.',
-        errors: validationErrors,
+        message: validationErrors[0],
       });
     } else {
       // Handle other types of errors

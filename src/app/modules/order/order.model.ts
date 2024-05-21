@@ -4,19 +4,19 @@ import { TOrder } from './order.interface';
 const orderSchema = new Schema<TOrder>({
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email is required.'],
   },
   productId: {
     type: String,
-    required: true,
+    required: [true, 'Product ID is required.'],
   },
   price: {
     type: Number,
-    required: true,
+    required: [true, 'Price is required.'],
   },
   quantity: {
     type: Number,
-    required: true,
+    required: [true, 'Quantity is required.'],
   },
 });
 
