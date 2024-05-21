@@ -60,7 +60,9 @@ export const getProductById = async (rec: Request, res: Response) => {
     const productId = rec.params.productId;
 
     const product = await productService.getProductById(productId);
-    console.log(product);
+    if (product === null) {
+      throw new Error('product not found');
+    }
     res.status(200).send({
       success: true,
       message: 'Product fetched successfully!',
@@ -78,11 +80,15 @@ export const updateProductById = async (rec: Request, res: Response) => {
   try {
     const productId = rec.params.productId;
     const productData = rec.body;
-    const validateData = ProductValidationSchema.parse(productData);
     const product = await productService.updateProductById(
       productId,
-      validateData,
+      productData,
     );
+
+    if (product === null) {
+      throw new Error('Product not found');
+    }
+
     res.status(200).send({
       success: true,
       message: 'Product updated successfully!',

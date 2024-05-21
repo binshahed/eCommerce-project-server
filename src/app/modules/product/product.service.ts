@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TProduct } from './product.interface';
 import Product from './product.model';
 
@@ -31,19 +32,20 @@ const getAllProduct = async (queryParams: { searchTerm?: string }) => {
 const getProductById = async (productId: string) => {
   //get product by id into db
   const result = await Product.findById(productId);
-  if (result === null) {
-    throw new Error('product not found');
-  }
+
   return result;
 };
-const updateProductById = async (productId: string, product: TProduct) => {
-  //update product by id into db
-  const result = await Product.findByIdAndUpdate(productId, product);
-  if (result === null) {
-    throw new Error('product not found');
-  }
-  return result;
+const updateProductById = async (productId: string, product: any) => {
+  // Update product by id in the database
+  const updatedProduct = await Product.findOneAndUpdate(
+    { _id: productId },
+    { $set: product },
+    { new: true, runValidators: true },
+  );
+
+  return updatedProduct;
 };
+
 const deleteProductById = async (productId: string) => {
   //delete product by id into db
   const result = await Product.findByIdAndDelete(productId);
