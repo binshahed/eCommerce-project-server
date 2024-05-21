@@ -37,3 +37,79 @@ export const createProduct = async (rec: Request, res: Response) => {
     }
   }
 };
+
+export const getAllProduct = async (rec: Request, res: Response) => {
+  const searchQuery = rec.query;
+  try {
+    const products = await productService.getAllProduct(searchQuery);
+    res.status(200).send({
+      success: true,
+      message: 'Products fetched successfully!',
+      data: products,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      success: false,
+      message: error.message || 'Internal server error.',
+    });
+  }
+};
+
+export const getProductById = async (rec: Request, res: Response) => {
+  try {
+    const productId = rec.params.productId;
+
+    const product = await productService.getProductById(productId);
+    console.log(product);
+    res.status(200).send({
+      success: true,
+      message: 'Product fetched successfully!',
+      data: product,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      success: false,
+      message: error.message || 'Internal server error.',
+    });
+  }
+};
+
+export const updateProductById = async (rec: Request, res: Response) => {
+  try {
+    const productId = rec.params.productId;
+    const productData = rec.body;
+    const validateData = ProductValidationSchema.parse(productData);
+    const product = await productService.updateProductById(
+      productId,
+      validateData,
+    );
+    res.status(200).send({
+      success: true,
+      message: 'Product updated successfully!',
+      data: product,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      success: false,
+      message: error.message || 'Internal server error.',
+    });
+  }
+};
+export const deleteProductById = async (rec: Request, res: Response) => {
+  try {
+    const productId = rec.params.productId;
+    const deletedData = await productService.deleteProductById(productId);
+    console.log(deletedData);
+
+    res.status(200).send({
+      success: true,
+      message: 'Product deleted successfully!',
+      data: null,
+    });
+  } catch (error: any) {
+    res.status(500).send({
+      success: false,
+      message: error.message || 'Internal server error.',
+    });
+  }
+};
