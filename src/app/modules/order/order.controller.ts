@@ -15,7 +15,6 @@ export const createOrder = async (req: Request, res: Response) => {
 
     const orderQuantity = validateData.quantity;
     const productQuantity = product.inventory.quantity;
-    let order;
 
     if (orderQuantity > productQuantity) {
       throw new Error('order quantity is greater than product quantity');
@@ -25,27 +24,36 @@ export const createOrder = async (req: Request, res: Response) => {
       throw new Error('Insufficient quantity available in inventory');
     }
 
-    if (productQuantity - orderQuantity === 0) {
-      await productService.updateProductById(validateData.productId, {
-        inventory: {
-          quantity: 0,
-          inStock: false,
-        },
-      });
-      order = await orderService.createOrder(validateData);
-    } else {
-      await productService.updateProductById(validateData.productId, {
-        inventory: {
-          quantity: productQuantity - orderQuantity,
-        },
-      });
-      order = await orderService.createOrder(validateData);
-    }
+    const newQuantity = productQuantity - orderQuantity;
+    const inStock = newQuantity > 0;
+
+    await productService.updateProductById(validateData.productId, {
+      inventory: {
+        quantity: newQuantity,
+        inStock: inStock,
+      },
+    });
+    const order = await orderService.createOrder(validateData);
 
     res.status(200).send({
       success: true,
       message: 'order created successfully',
       data: order,
+    });
+  } catch (err: any) {
+    res.status(404).send({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+export const getOrders = async (req: Request, res: Response) => {
+  try {
+    const orders = await orderService.getOrders();
+    res.status(200).send({
+      success: true,
+      data: orders,
     });
   } catch (err: any) {
     res.status(404).send({
