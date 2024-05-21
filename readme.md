@@ -4,7 +4,7 @@
 
 This project is an API for managing products and orders. It includes endpoints for creating, reading, updating, and deleting products, as well as creating and retrieving orders. The API is built with Express and MongoDB, and uses Zod for data validation.
 
-## Prerequisites
+## Technologies
 
 - Node.js
 - MongoDB
