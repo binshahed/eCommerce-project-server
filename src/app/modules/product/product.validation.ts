@@ -69,3 +69,6 @@ export const ProductValidationSchema = z.object({
   variants: variants,
   inventory: inventory,
 });
+
+export const PartialProductValidationSchema =
+  ProductValidationSchema.partial().strict();

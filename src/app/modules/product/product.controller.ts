@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import { productService } from './product.service';
-import { ProductValidationSchema } from './product.validation';
+import {
+  PartialProductValidationSchema,
+  ProductValidationSchema,
+} from './product.validation';
 import { ZodError } from 'zod';
 
 export const createProduct = async (rec: Request, res: Response) => {
@@ -79,14 +82,18 @@ export const getProductById = async (rec: Request, res: Response) => {
     });
   }
 };
-
-export const updateProductById = async (rec: Request, res: Response) => {
+export const updateProductById = async (req: Request, res: Response) => {
   try {
-    const productId = rec.params.productId;
-    const productData = rec.body;
+    const productId = req.params.productId;
+    const productData = req.body;
+    console.log(productData);
+
+    // Validate the partial data with strict validation
+    const validateData = PartialProductValidationSchema.parse(productData);
+
     const product = await productService.updateProductById(
       productId,
-      productData,
+      validateData,
     );
 
     if (product === null) {
@@ -99,10 +106,20 @@ export const updateProductById = async (rec: Request, res: Response) => {
       data: product,
     });
   } catch (error: any) {
-    res.status(500).send({
-      success: false,
-      message: error.message || 'Internal server error.',
-    });
+    if (error instanceof ZodError) {
+      res.status(400).send({
+        success: false,
+        message: error.errors.map((err) => ({
+          path: err.path,
+          message: err.message,
+        }))[0].message,
+      });
+    } else {
+      res.status(500).send({
+        success: false,
+        message: error.message || 'Internal server error.',
+      });
+    }
   }
 };
 export const deleteProductById = async (rec: Request, res: Response) => {
