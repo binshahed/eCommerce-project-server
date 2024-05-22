@@ -47,7 +47,7 @@ export const getAllProduct = async (rec: Request, res: Response) => {
     res.status(200).send({
       success: true,
       message: searchQuery.searchTerm
-        ? `Products matching search term ${searchQuery.searchTerm} fetched successfully!`
+        ? `Products matching search term '${searchQuery.searchTerm}' fetched successfully!`
         : 'Products fetched successfully!',
       data: products,
     });

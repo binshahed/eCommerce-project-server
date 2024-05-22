@@ -64,7 +64,9 @@ export const getOrders = async (req: Request, res: Response) => {
 
     res.status(200).send({
       success: true,
-      message: 'orders fetched successfully',
+      message: queryEmail
+        ? 'Orders fetched successfully for user email!'
+        : 'orders fetched successfully',
       data: orders,
     });
   } catch (err: any) {
