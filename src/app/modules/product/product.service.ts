@@ -49,9 +49,6 @@ const updateProductById = async (productId: string, product: any) => {
 const deleteProductById = async (productId: string) => {
   //delete product by id into db
   const result = await Product.findByIdAndDelete(productId);
-  if (result === null) {
-    throw new Error('product not found');
-  }
 
   return result;
 };

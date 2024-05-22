@@ -70,5 +70,6 @@ export const ProductValidationSchema = z.object({
   inventory: inventory,
 });
 
+// update product partial validation
 export const PartialProductValidationSchema =
   ProductValidationSchema.partial().strict();

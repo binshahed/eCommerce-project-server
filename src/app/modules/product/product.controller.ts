@@ -6,10 +6,11 @@ import {
   ProductValidationSchema,
 } from './product.validation';
 import { ZodError } from 'zod';
+import { TProduct } from './product.interface';
 
 export const createProduct = async (rec: Request, res: Response) => {
   try {
-    const productData = rec.body;
+    const productData: TProduct = rec.body;
     // zod validation
     const validateData = ProductValidationSchema.parse(productData);
     // create product into db
@@ -43,6 +44,7 @@ export const createProduct = async (rec: Request, res: Response) => {
 export const getAllProduct = async (rec: Request, res: Response) => {
   const searchQuery = rec.query;
   try {
+    // get all products
     const products = await productService.getAllProduct(searchQuery);
     if (products.length === 0) {
       throw new Error('product not found');
@@ -66,7 +68,10 @@ export const getProductById = async (rec: Request, res: Response) => {
   try {
     const productId = rec.params.productId;
 
+    // get product by id
     const product = await productService.getProductById(productId);
+
+    // send response in product not found
     if (product === null) {
       throw new Error('product not found');
     }
@@ -84,18 +89,19 @@ export const getProductById = async (rec: Request, res: Response) => {
 };
 export const updateProductById = async (req: Request, res: Response) => {
   try {
-    const productId = req.params.productId;
+    const productId: string | undefined = req.params.productId;
     const productData = req.body;
-    console.log(productData);
 
     // Validate the partial data with strict validation
     const validateData = PartialProductValidationSchema.parse(productData);
 
+    // update product by id
     const product = await productService.updateProductById(
       productId,
       validateData,
     );
 
+    // send response in product not found
     if (product === null) {
       throw new Error('Product not found');
     }
@@ -124,9 +130,14 @@ export const updateProductById = async (req: Request, res: Response) => {
 };
 export const deleteProductById = async (rec: Request, res: Response) => {
   try {
-    const productId = rec.params.productId;
+    const productId: string | undefined = rec.params.productId;
+    // delete product by id
     const deletedData = await productService.deleteProductById(productId);
-    console.log(deletedData);
+
+    // send response in product not found
+    if (deletedData === null) {
+      throw new Error('product not found');
+    }
 
     res.status(200).send({
       success: true,
